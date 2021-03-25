@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css" />
+    <script defer src="icons/fontawesome-free-5.15.2-web/js/all.js"></script>
+    <script src="https://apis.google.com/js/api.js"></script>
+  </head>
+  <body>
+    <!-- Nav bar -->
+    <nav>
+      <div class="left">
+        <!-- burger menu-->
+        <button class="menu-button">
+          <i class="fas fa-lg fa-bars"></i>
+        </button>
+        <!-- youtube logo -->
+        <div class="youtube-logo">
+          <i class="fab fa-2x fa-youtube"></i>
+          <div class="youtube-textlogo">Youtube</div>
+        </div>
+      </div>
+
+      <div class="middle">
+        <input class="search-bar" type="text" placeholder="Search" />
+        <button class="search-button"><i class="fas fa-search"></i></button>
+      </div>
+      <div class="right">
+        <button class="iconbutton">
+          <i class="fas fa-th righticons"></i>
+        </button>
+        <button class="iconbutton">
+          <i class="fas fa-bell righticons"></i>
+        </button>
+        <img
+          src="https://lh3.googleusercontent.com/ogw/ADGmqu-yUuS0iB7TlSPbz6givS71To6SEz_LSfvz3M-3vQ=s32-c-mo"
+          alt=""
+          class="profile"
+        />
+      </div>
+    </nav>
+    <!-- end nav-->
+
+    <div class="main-wrapper">
+      <!-- left section -->
+      <div class="leftsidebar">
+        <div class="topsection">
+          <div class="sidebar-item">
+            <i class="fas fa-home sidebar-icons"></i>
+            <span class="sidebar-text">Home</span>
+          </div>
+          <div class="sidebar-item">
+            <i class="fas fa-fire fa-lg sidebar-icons"></i>
+            <span class="sidebar-text">Trending</span>
+          </div>
+        </div>
+        <div class="library"></div>
+        <div class="subscriptions"></div>
+        <div class="more"></div>
+        <div class="settings"></div>
+        <div class="info"></div>
+      </div>
+      <!-- -- left section end -- -->
+
+      <!-- main section-->
+      <div class="main">
+        <div class="card">
+          <div class="video"></div>
+          <div class="video-info"></div>
+        </div>
+      </div>
+    </div>
+    <script src="https://apis.google.com/js/api.js"></script>
+
+    <script src="script.js"></script>
+  </body>
+</html>
