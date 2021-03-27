@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Youtube Clone</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined"
+      rel="stylesheet"
+    />
+    <script defer src="icons/fontawesome-free-5.15.2-web/js/all.js"></script>
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <!-- Nav bar -->
+    <nav>
+      <div class="left">
+        <!-- burger menu-->
+        <button class="menu-button">
+          <i class="fas fa-lg fa-bars"></i>
+        </button>
+        <!-- youtube logo -->
+        <div class="youtube-logo">
+          <i class="fab fa-2x fa-youtube"></i>
+          <div class="youtube-textlogo">Youtube</div>
+        </div>
+      </div>
+
+      <div class="middle">
+        <input id="search-bar" type="text" placeholder="Search" />
+        <button id="search-button"><i class="fas fa-search"></i></button>
+      </div>
+      <div class="right">
+        <button class="iconbutton">
+          <i class="fas fa-th righticons"></i>
+        </button>
+        <button class="iconbutton">
+          <i class="fas fa-bell righticons"></i>
+        </button>
+        <img
+          src="https://lh3.googleusercontent.com/ogw/ADGmqu-yUuS0iB7TlSPbz6givS71To6SEz_LSfvz3M-3vQ=s32-c-mo"
+          alt=""
+          class="profile"
+        />
+      </div>
+    </nav>
+    <!-- end nav-->
+    <div class="main-wrapper">
+      <!-- main section-->
+
+      <div id="video-main">
+        <div id="videowrapper">
+          <div class="iframe-video">
+            <div class="iframe-wrapper">
+              <iframe
+                src="https://www.youtube.com/embed/CMdHDHEuOUE"
+                frameborder="0"
+              ></iframe>
+            </div>
+            <h2>Video Title</h2>
+            <div class="video-details">
+              <div class="video-details1">
+                <span>views</span>
+                <span>date</span>
+              </div>
+              <div class="video-details2">
+                <span class="material-icons-outlined md-24"> thumb_up </span>
+                <span>50</span>
+                <span class="material-icons-outlined"> thumb_down_alt </span>
+                <span>30</span>
+              </div>
+            </div>
+            <div class="channel-details">
+              <div class="channelImg"></div>
+              <div class="video-channel-info">
+                <p>Traversy Media</p>
+
+                <p>
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Nemo
+                  officiis, deleniti harum sint nobis quod.
+                </p>
+              </div>
+              <div class="subscribe">
+                <button id="subscribe-button">SUBSCRIBE</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
