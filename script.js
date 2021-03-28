@@ -26,10 +26,13 @@ async function getSearchResults(searchTerm, displayResults) {
 }
 
 let displayResults = (results) => {
+  console.log(results);
   let mainDiv = document.getElementById("main");
   let items = results.items;
   console.log(items);
+  // video ids in order, to be used in fetching video details
   let videoIds = [];
+  let channelIds = [];
 
   for (const key in items) {
     // skip non video results
@@ -40,6 +43,7 @@ let displayResults = (results) => {
     let videoDescription = items[key]["snippet"]["description"];
     let videoId = items[key]["id"]["videoId"];
     let channelTitle = items[key]["snippet"]["channelTitle"];
+    let channelId = items[key]["snippet"]["channelId"];
 
     // initialize card div and append to main div
     let cardDiv = document.createElement("div");
@@ -60,13 +64,14 @@ let displayResults = (results) => {
     let videoInfo = document.createElement("div");
     videoInfo.classList.add("video-info");
 
-    let videoTitleHTML = document.createElement("h2");
+    let videoTitleHTML = document.createElement("h3");
     videoTitleHTML.textContent = videoTitle;
 
     let channelInfoDiv = document.createElement("div");
     channelInfoDiv.classList.add("channel-info");
 
     let channelTitleHTML = document.createElement("span");
+    channelTitleHTML.classList.add("channel-title");
     channelTitleHTML.textContent = channelTitle;
 
     let videoDescriptionHTML = document.createElement("p");
@@ -74,18 +79,51 @@ let displayResults = (results) => {
 
     videoInfo.appendChild(videoTitleHTML);
     videoInfo.appendChild(channelInfoDiv);
-    videoInfo.appendChild(channelTitleHTML);
+    channelInfoDiv.appendChild(channelTitleHTML);
     videoInfo.appendChild(videoDescriptionHTML);
     cardDiv.appendChild(videoInfo);
 
+    channelIds.push(channelId);
     videoIds.push(videoId);
   }
-
+  console.log("channelIds: ", channelIds);
   // get remaining info needed using another fetch
-  getVideoInfo(videoIds, displayVideoInfoInResults);
+  displayVideoInfo(videoIds, displayVideoInfoOnDocument);
+  displayChannelImgs(channelIds, displayChannelImgsOnDocument);
 };
 
-let getVideoInfo = (videoIds, displayVideoInfoInResults) => {
+let displayChannelImgs = (channelIds, displayChannelImgsOnDocument) => {
+  // using a loop since the api skips repeated channel ids
+  for (let count = 0; count < channelIds.length; count++) {
+    fetch(
+      "https://youtube.googleapis.com/youtube/v3/channels?" +
+        new URLSearchParams({
+          part: ["snippet", "contentDetails", "statistics"],
+          id: channelIds[count],
+          key: key,
+        }).toString()
+    )
+      .then((data) => data.json())
+      .then((data) => displayChannelImgsOnDocument(data, count));
+  }
+};
+
+let displayChannelImgsOnDocument = (data, counter) => {
+  let channelInfoDivs = document.getElementsByClassName("channel-info");
+  let channelTitledivs = document.getElementsByClassName("channel-title");
+  let channelThumbnail =
+    data["items"][0]["snippet"]["thumbnails"]["default"]["url"];
+
+  let channelInfoDiv = channelInfoDivs.item(counter);
+  let channelTitle = channelTitledivs.item(counter);
+
+  let channelThumbnailElement = document.createElement("img");
+  channelThumbnailElement.src = channelThumbnail;
+
+  channelInfoDiv.insertBefore(channelThumbnailElement, channelTitle);
+};
+
+let displayVideoInfo = (videoIds, displayVideoInfoOnDocument) => {
   fetch(
     "https://youtube.googleapis.com/youtube/v3/videos?" +
       new URLSearchParams({
@@ -95,12 +133,12 @@ let getVideoInfo = (videoIds, displayVideoInfoInResults) => {
       }).toString()
   )
     .then((data) => data.json())
-    .then((data) => displayVideoInfoInResults(data));
+    .then((data) => displayVideoInfoOnDocument(data));
 
-  addCardClickListeners();
+  // addCardClickListeners();
 };
 
-let displayVideoInfoInResults = (results) => {
+let displayVideoInfoOnDocument = (results) => {
   console.log(results);
   let videoInfoDivs = document.getElementsByClassName("video-info");
   let channelInfoDivs = document.getElementsByClassName("channel-info");
@@ -118,6 +156,7 @@ let displayVideoInfoInResults = (results) => {
     let timePublished = items[key]["snippet"]["publishedAt"];
     let videoLikes = items[key]["statistics"]["likeCount"];
     let videoDislikes = items[key]["statistics"]["dislikeCount"];
+    let videoId = items[key]["id"];
 
     // split provided time and get the date only
     let time = timePublished.split("T");
@@ -132,41 +171,166 @@ let displayVideoInfoInResults = (results) => {
     videoInfoDiv.insertBefore(views, channelInfoDiv);
     videoInfoDiv.insertBefore(timePublishedHTML, channelInfoDiv);
 
-    let videoLikesHTML = document.createElement("p");
-    videoDislikesHTML.classList.add("videoLikes");
-    videoLikesHTML.textContent = videoLikes;
+    let videoLikesHTML = document.createElement("span");
+    videoLikesHTML.classList.add("videoLikes");
+    videoLikesHTML.textContent = videoLikes + "\n";
 
-    let videoDislikesHTML = document.createElement("p");
+    let videoDislikesHTML = document.createElement("span");
     videoDislikesHTML.classList.add("videoDislikes");
-    videoDislikesHTML.textContent = videoDislikes;
+    videoDislikesHTML.textContent = videoDislikes + "\n";
+
+    let videoIdHTML = document.createElement("span");
+    videoIdHTML.classList.add("videoId");
+    videoIdHTML.textContent = videoId;
 
     let hiddenInfoDiv = document.createElement("div");
     hiddenInfoDiv.classList.add("hidden");
     hiddenInfoDiv.appendChild(videoLikesHTML);
     hiddenInfoDiv.appendChild(videoDislikesHTML);
+    hiddenInfoDiv.appendChild(videoIdHTML);
 
     cardDiv.appendChild(hiddenInfoDiv);
     counter++;
   }
+
+  addCardClickListeners();
 };
 
 // adding click event listeners to video cards
 let addCardClickListeners = () => {
   let cardDivs = document.getElementsByClassName("card");
-  let hiddenDiv = document.getElementById("hidden");
+  let hiddenDivs = document.getElementsByClassName("hidden");
+
   // click event listeners for cards
   for (let i = 0; i < cardDivs.length; i++) {
     let card = cardDivs.item(i);
+    let hiddenDiv = hiddenDivs.item(i);
 
     card.addEventListener("click", () => {
-      let cardDiv = card.innerText;
-      console.log(hiddenDiv.innerText);
-      console.log(cardDiv);
-      console.log("test");
+      let cardDivText = card.innerText;
+
+      let hiddenDivText = hiddenDiv.innerText;
+
+      // save needed video info in session since on new page load all previous JS gets deleted
+      sessionStorage.setItem("cardInfo", cardDivText);
+      sessionStorage.setItem("hiddenInfo", hiddenDivText);
+
       window.location.href = "video.html";
     });
   }
 };
 
-//TODO: continue, get needed info from hidden div and card div
-let addVideoPageDivs = () => {};
+let addVideoPageDivs = (cardText, hiddenText) => {
+  [title, viewsAndPublishDate, channelTitle, _, description] = cardText.split(
+    "\n"
+  );
+
+  // 3279943 views      at: 2018-07-16
+  [likes, dislikes, videoId] = hiddenText.split("\n");
+  [views, publishDate] = viewsAndPublishDate.split("Published");
+
+  let iframeDiv = document.getElementsByClassName("iframe-video")[0];
+  console.log(iframeDiv);
+  let iframeWrapper = document.createElement("div");
+  iframeWrapper.classList.add("iframe-wrapper");
+
+  let iframeELement = document.createElement("iframe");
+  iframeELement.src = "https://www.youtube.com/embed/" + videoId;
+
+  iframeWrapper.appendChild(iframeELement);
+  iframeDiv.appendChild(iframeWrapper);
+
+  iframeDiv.appendChild(document.createElement("br"));
+
+  let videoTitleElement = document.createElement("h2");
+  videoTitleElement.textContent = title;
+  iframeDiv.appendChild(videoTitleElement);
+
+  iframeDiv.appendChild(document.createElement("br"));
+
+  let videoDetails = document.createElement("div");
+  let videoDetails1 = document.createElement("div");
+  let videoDetails2 = document.createElement("div");
+
+  videoDetails.classList.add("video-details");
+  videoDetails1.classList.add("video-details1");
+  videoDetails2.classList.add("video-details2");
+
+  // create video details 1 content
+  let viewsElement = document.createElement("span");
+  viewsElement.textContent = views;
+
+  let dateElement = document.createElement("span");
+  dateElement.textContent = " - " + publishDate.split(":")[1];
+
+  // add videodetails1 content to videodetails1
+  videoDetails1.appendChild(viewsElement);
+  videoDetails1.appendChild(dateElement);
+
+  // create videodetails 2 content
+  let likeIcon = document.createElement("span");
+  let likesELement = document.createElement("span");
+  let dislikesIcon = document.createElement("span");
+  let dislikesElement = document.createElement("span");
+
+  likeIcon.classList.add("material-icons-outlined", "md-24");
+  likeIcon.textContent = "thumb_up";
+
+  dislikesIcon.classList.add("material-icons-outlined");
+  dislikesIcon.textContent = "thumb_down_alt";
+
+  likesELement.textContent = likes;
+
+  dislikesElement.textContent = dislikes;
+  // add content to videodetails2
+  videoDetails2.appendChild(likeIcon);
+  videoDetails2.appendChild(likesELement);
+  videoDetails2.appendChild(dislikesIcon);
+  videoDetails2.appendChild(dislikesElement);
+  // add video details 1 and 2 to videodetails
+  videoDetails.appendChild(videoDetails1);
+  videoDetails.appendChild(videoDetails2);
+
+  iframeDiv.appendChild(videoDetails);
+
+  createChannelDetails(iframeDiv, channelTitle, description);
+};
+
+let createChannelDetails = (iframeDiv, channelTitle, description) => {
+  let channelDetailsDiv = document.createElement("div");
+  channelDetailsDiv.classList.add("channel-details");
+  iframeDiv.appendChild(channelDetailsDiv);
+
+  let channelImgDiv = document.createElement("div");
+  channelImgDiv.classList.add("channelImg");
+  channelDetailsDiv.appendChild(channelImgDiv);
+
+  let videoChannelInfoDiv = document.createElement("div");
+  videoChannelInfoDiv.classList.add("video-channel-info");
+  channelDetailsDiv.appendChild(videoChannelInfoDiv);
+
+  let channelTitleElement = document.createElement("p");
+  channelTitleElement.textContent = channelTitle;
+  videoChannelInfoDiv.appendChild(channelTitleElement);
+
+  let videoDescriptionElement = document.createElement("p");
+  videoDescriptionElement.textContent = description;
+  videoChannelInfoDiv.appendChild(videoDescriptionElement);
+
+  // subscribe button
+  let subscribeDiv = document.createElement("div");
+  subscribeDiv.classList.add("subscribe");
+  let subscribeButton = document.createElement("button");
+  subscribeButton.textContent = "SUBSCRIBE";
+  subscribeButton.id = "subscribe-button";
+
+  subscribeDiv.appendChild(subscribeButton);
+
+  channelDetailsDiv.appendChild(videoChannelInfoDiv);
+  channelDetailsDiv.appendChild(subscribeDiv);
+};
+if (window.location.href === "http://127.0.0.1:5501/video.html") {
+  let cardDivText = sessionStorage.getItem("cardInfo");
+  let hiddenDivText = sessionStorage.getItem("hiddenInfo");
+  document.onload = addVideoPageDivs(cardDivText, hiddenDivText);
+}

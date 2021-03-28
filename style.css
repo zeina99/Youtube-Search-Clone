@@ -65,10 +65,10 @@ nav {
   color: #646464;
 }
 #search-bar {
-  font-size: 1.2rem;
+  font-size: 1rem;
   color: white;
-  padding: 10px;
-  width: 40rem;
+  padding: 6px;
+  width: 35rem;
   background-color: #0f0f0f;
   border: none;
 }
@@ -130,12 +130,13 @@ nav {
   background-color: #646464;
 }
 .sidebar-item > span {
-  font-size: 1.2rem;
+  font-size: 1rem;
   padding-left: 0.5rem;
 }
 #main {
   background-color: #171717;
   flex: 1 1 85%;
+  min-height: 92.1vh;
 }
 .card {
   margin: 1.2rem auto;
@@ -146,12 +147,13 @@ nav {
 .hidden {
   display: none;
 }
-.video {
-  overflow: hidden;
-}
+
 .video > img {
-  margin-top: -3.125rem;
-  margin-bottom: -3.125rem;
+  /* margin-top: -2rem;
+    margin-bottom: -2rem; */
+
+  height: 294px;
+  width: 393px;
 }
 .video-info {
   padding: 0rem 1rem;
@@ -180,6 +182,9 @@ nav {
 }
 .iframe-video {
   width: 85%;
+}
+.iframe-video iframe {
+  border: none;
 }
 .iframe-wrapper {
   height: 40em;
@@ -210,6 +215,7 @@ nav {
 }
 .video-details1 > span {
   color: var(--secondary_color);
+  font-size: 0.85rem;
 }
 .channel-details {
   padding: 1.3rem 0rem;
