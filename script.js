@@ -25,6 +25,8 @@ async function getSearchResults(searchTerm, displayResults) {
     .then((data) => displayResults(data));
 }
 
+let channelIds = [];
+
 let displayResults = (results) => {
   console.log(results);
   let mainDiv = document.getElementById("main");
@@ -32,7 +34,6 @@ let displayResults = (results) => {
   console.log(items);
   // video ids in order, to be used in fetching video details
   let videoIds = [];
-  let channelIds = [];
 
   for (const key in items) {
     // skip non video results
@@ -86,10 +87,9 @@ let displayResults = (results) => {
     channelIds.push(channelId);
     videoIds.push(videoId);
   }
-  console.log("channelIds: ", channelIds);
+
   // get remaining info needed using another fetch
   displayVideoInfo(videoIds, displayVideoInfoOnDocument);
-  displayChannelImgs(channelIds, displayChannelImgsOnDocument);
 };
 
 let displayChannelImgs = (channelIds, displayChannelImgsOnDocument) => {
@@ -111,11 +111,21 @@ let displayChannelImgs = (channelIds, displayChannelImgsOnDocument) => {
 let displayChannelImgsOnDocument = (data, counter) => {
   let channelInfoDivs = document.getElementsByClassName("channel-info");
   let channelTitledivs = document.getElementsByClassName("channel-title");
+  let hiddenDivs = document.getElementsByClassName("hidden");
+
   let channelThumbnail =
     data["items"][0]["snippet"]["thumbnails"]["default"]["url"];
 
   let channelInfoDiv = channelInfoDivs.item(counter);
   let channelTitle = channelTitledivs.item(counter);
+
+  let channelThumbnailSpan = document.createElement("span");
+  channelThumbnailSpan.textContent = channelThumbnail;
+
+  let hiddenDiv = hiddenDivs.item(counter);
+
+  hiddenDiv.appendChild(channelThumbnailSpan);
+  // console.log(hiddenDiv.innerText);
 
   let channelThumbnailElement = document.createElement("img");
   channelThumbnailElement.src = channelThumbnail;
@@ -138,6 +148,7 @@ let displayVideoInfo = (videoIds, displayVideoInfoOnDocument) => {
   // addCardClickListeners();
 };
 
+// search page
 let displayVideoInfoOnDocument = (results) => {
   console.log(results);
   let videoInfoDivs = document.getElementsByClassName("video-info");
@@ -181,7 +192,7 @@ let displayVideoInfoOnDocument = (results) => {
 
     let videoIdHTML = document.createElement("span");
     videoIdHTML.classList.add("videoId");
-    videoIdHTML.textContent = videoId;
+    videoIdHTML.textContent = videoId + "\n";
 
     let hiddenInfoDiv = document.createElement("div");
     hiddenInfoDiv.classList.add("hidden");
@@ -193,6 +204,7 @@ let displayVideoInfoOnDocument = (results) => {
     counter++;
   }
 
+  displayChannelImgs(channelIds, displayChannelImgsOnDocument);
   addCardClickListeners();
 };
 
@@ -226,11 +238,13 @@ let addVideoPageDivs = (cardText, hiddenText) => {
   );
 
   // 3279943 views      at: 2018-07-16
-  [likes, dislikes, videoId] = hiddenText.split("\n");
+  [likes, dislikes, videoId, channelThumbnailUrl] = hiddenText.split("\n");
+
   [views, publishDate] = viewsAndPublishDate.split("Published");
 
   let iframeDiv = document.getElementsByClassName("iframe-video")[0];
   console.log(iframeDiv);
+
   let iframeWrapper = document.createElement("div");
   iframeWrapper.classList.add("iframe-wrapper");
 
@@ -293,10 +307,21 @@ let addVideoPageDivs = (cardText, hiddenText) => {
 
   iframeDiv.appendChild(videoDetails);
 
-  createChannelDetails(iframeDiv, channelTitle, description);
+  createChannelDetails(
+    iframeDiv,
+    channelTitle,
+    description,
+    channelThumbnailUrl
+  );
 };
 
-let createChannelDetails = (iframeDiv, channelTitle, description) => {
+// channel details on video page
+let createChannelDetails = (
+  iframeDiv,
+  channelTitle,
+  description,
+  channelThumbnailUrl
+) => {
   let channelDetailsDiv = document.createElement("div");
   channelDetailsDiv.classList.add("channel-details");
   iframeDiv.appendChild(channelDetailsDiv);
@@ -304,6 +329,11 @@ let createChannelDetails = (iframeDiv, channelTitle, description) => {
   let channelImgDiv = document.createElement("div");
   channelImgDiv.classList.add("channelImg");
   channelDetailsDiv.appendChild(channelImgDiv);
+
+  let channelImg = document.createElement("img");
+  channelImg.src = channelThumbnailUrl;
+  // channelImg.classList.add("channelImg");
+  channelImgDiv.appendChild(channelImg);
 
   let videoChannelInfoDiv = document.createElement("div");
   videoChannelInfoDiv.classList.add("video-channel-info");

@@ -105,6 +105,7 @@ nav {
 .main-wrapper {
   display: flex;
   color: #ffffff;
+  min-height: 94vh;
 }
 /* ----  left side bar ---- */
 .leftsidebar {
@@ -136,7 +137,7 @@ nav {
 #main {
   background-color: #171717;
   flex: 1 1 85%;
-  min-height: 92.1vh;
+  min-height: 94vh;
 }
 .card {
   margin: 1.2rem auto;
@@ -172,6 +173,9 @@ nav {
   height: 2rem;
   margin-right: 1rem;
 }
+.channel-info > span {
+  font-size: 0.9rem;
+}
 #videowrapper {
   width: 80%;
   margin: auto;
@@ -181,7 +185,7 @@ nav {
   background-color: #171717;
 }
 .iframe-video {
-  width: 85%;
+  width: 75%;
 }
 .iframe-video iframe {
   border: none;
@@ -224,6 +228,15 @@ nav {
 }
 .channelImg {
   flex: 1 1 5%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-around;
+}
+.channelImg > img {
+  /* transform: scale(0.5); */
+  border-radius: 50%;
+  width: 2.7rem;
+  height: 2.7rem;
 }
 .subscribe {
   flex: 1 1 20%;
@@ -242,4 +255,7 @@ nav {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+}
+.video-channel-info > p {
+  padding-bottom: 15px;
 }
