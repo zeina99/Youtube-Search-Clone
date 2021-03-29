@@ -28,10 +28,8 @@ async function getSearchResults(searchTerm, displayResults) {
 let channelIds = [];
 
 let displayResults = (results) => {
-  console.log(results);
   let mainDiv = document.getElementById("main");
   let items = results.items;
-  console.log(items);
   // video ids in order, to be used in fetching video details
   let videoIds = [];
 
@@ -125,7 +123,6 @@ let displayChannelImgsOnDocument = (data, counter) => {
   let hiddenDiv = hiddenDivs.item(counter);
 
   hiddenDiv.appendChild(channelThumbnailSpan);
-  // console.log(hiddenDiv.innerText);
 
   let channelThumbnailElement = document.createElement("img");
   channelThumbnailElement.src = channelThumbnail;
@@ -150,7 +147,6 @@ let displayVideoInfo = (videoIds, displayVideoInfoOnDocument) => {
 
 // search page
 let displayVideoInfoOnDocument = (results) => {
-  console.log(results);
   let videoInfoDivs = document.getElementsByClassName("video-info");
   let channelInfoDivs = document.getElementsByClassName("channel-info");
   let cardDivs = document.getElementsByClassName("card");
@@ -243,7 +239,6 @@ let addVideoPageDivs = (cardText, hiddenText) => {
   [views, publishDate] = viewsAndPublishDate.split("Published");
 
   let iframeDiv = document.getElementsByClassName("iframe-video")[0];
-  console.log(iframeDiv);
 
   let iframeWrapper = document.createElement("div");
   iframeWrapper.classList.add("iframe-wrapper");
@@ -359,7 +354,9 @@ let createChannelDetails = (
   channelDetailsDiv.appendChild(videoChannelInfoDiv);
   channelDetailsDiv.appendChild(subscribeDiv);
 };
-if (window.location.href === "http://127.0.0.1:5501/video.html") {
+let fileName = location.pathname.split("/").slice(-1)[0];
+
+if (fileName === "video.html") {
   let cardDivText = sessionStorage.getItem("cardInfo");
   let hiddenDivText = sessionStorage.getItem("hiddenInfo");
   document.onload = addVideoPageDivs(cardDivText, hiddenDivText);
