@@ -4,6 +4,8 @@ let searchButton = document.getElementById("search-button");
 let searchBar = document.getElementById("search-bar");
 
 searchButton.addEventListener("click", () => {
+  let instructionText = document.getElementById("instructions");
+  instructionText.textContent = "";
   let mainDiv = document.getElementById("main");
   mainDiv.innerHTML = "";
   let searchTerm = searchBar.value;
