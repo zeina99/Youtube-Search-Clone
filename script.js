@@ -5,7 +5,9 @@ let searchBar = document.getElementById("search-bar");
 
 searchButton.addEventListener("click", () => {
   let instructionText = document.getElementById("instructions");
-  instructionText.textContent = "";
+
+  if (instructionText !== undefined) instructionText.textContent = "";
+
   let mainDiv = document.getElementById("main");
   mainDiv.innerHTML = "";
   let searchTerm = searchBar.value;
@@ -230,6 +232,13 @@ let addCardClickListeners = () => {
   }
 };
 
+// video page
+if (fileName === "video.html") {
+  let cardDivText = sessionStorage.getItem("cardInfo");
+  let hiddenDivText = sessionStorage.getItem("hiddenInfo");
+  document.onload = addVideoPageDivs(cardDivText, hiddenDivText);
+}
+
 let addVideoPageDivs = (cardText, hiddenText) => {
   [title, viewsAndPublishDate, channelTitle, _, description] = cardText.split(
     "\n"
@@ -357,9 +366,3 @@ let createChannelDetails = (
   channelDetailsDiv.appendChild(subscribeDiv);
 };
 let fileName = location.pathname.split("/").slice(-1)[0];
-
-if (fileName === "video.html") {
-  let cardDivText = sessionStorage.getItem("cardInfo");
-  let hiddenDivText = sessionStorage.getItem("hiddenInfo");
-  document.onload = addVideoPageDivs(cardDivText, hiddenDivText);
-}
