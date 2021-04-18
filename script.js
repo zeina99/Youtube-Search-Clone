@@ -232,6 +232,8 @@ let addCardClickListeners = () => {
   }
 };
 
+let fileName = location.pathname.split("/").slice(-1)[0];
+
 // video page
 if (fileName === "video.html") {
   let cardDivText = sessionStorage.getItem("cardInfo");
@@ -365,4 +367,3 @@ let createChannelDetails = (
   channelDetailsDiv.appendChild(videoChannelInfoDiv);
   channelDetailsDiv.appendChild(subscribeDiv);
 };
-let fileName = location.pathname.split("/").slice(-1)[0];
