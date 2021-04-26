@@ -6,7 +6,7 @@ let searchBar = document.getElementById("search-bar");
 searchButton.addEventListener("click", () => {
   let instructionText = document.getElementById("instructions");
 
-  if (instructionText !== undefined || null) instructionText.textContent = "";
+  if (instructionText === undefined || null) instructionText.textContent = "";
 
   let mainDiv = document.getElementById("main");
   mainDiv.innerHTML = "";
