@@ -241,7 +241,7 @@ if (fileName === "video.html") {
   document.onload = addVideoPageDivs(cardDivText, hiddenDivText);
 }
 
-let addVideoPageDivs = (cardText, hiddenText) => {
+function addVideoPageDivs(cardText, hiddenText) {
   [title, viewsAndPublishDate, channelTitle, _, description] = cardText.split(
     "\n"
   );
@@ -315,21 +315,22 @@ let addVideoPageDivs = (cardText, hiddenText) => {
 
   iframeDiv.appendChild(videoDetails);
 
+  // channel details
   createChannelDetails(
     iframeDiv,
     channelTitle,
     description,
     channelThumbnailUrl
   );
-};
+}
 
 // channel details on video page
-let createChannelDetails = (
+function createChannelDetails(
   iframeDiv,
   channelTitle,
   description,
   channelThumbnailUrl
-) => {
+) {
   let channelDetailsDiv = document.createElement("div");
   channelDetailsDiv.classList.add("channel-details");
   iframeDiv.appendChild(channelDetailsDiv);
@@ -366,4 +367,4 @@ let createChannelDetails = (
 
   channelDetailsDiv.appendChild(videoChannelInfoDiv);
   channelDetailsDiv.appendChild(subscribeDiv);
-};
+}
