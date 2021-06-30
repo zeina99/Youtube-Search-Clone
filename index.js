@@ -1,4 +1,10 @@
-let key = "AIzaSyAj314hsQUuaB3n_Sebf_28uLfUpNr0boc";
+// Promise.all <-- look into using that instead of making seperate fetch calls and resolving one at a time. ex: displayChannelImgs
+// break this down into two scripts rather than one script
+
+// prod key
+// let key = "AIzaSyAj314hsQUuaB3n_Sebf_28uLfUpNr0boc";
+// testing key
+let key = "AIzaSyBzyrC-05gpXNc1HlLYV4igKKqGkDaP0cw";
 
 let searchButton = document.getElementById("search-button");
 let searchBar = document.getElementById("search-bar");
@@ -10,13 +16,14 @@ searchButton.addEventListener("click", () => {
 
   let mainDiv = document.getElementById("main");
   mainDiv.innerHTML = "";
+
   let searchTerm = searchBar.value;
 
   getSearchResults(searchTerm, displayResults);
 });
 
-async function getSearchResults(searchTerm, displayResults) {
-  await fetch(
+function getSearchResults(searchTerm, displayResults) {
+  fetch(
     "https://www.googleapis.com/youtube/v3/search?" +
       new URLSearchParams({
         key: key,
@@ -36,7 +43,7 @@ let displayResults = (results) => {
   let items = results.items;
   // video ids in order, to be used in fetching video details
   let videoIds = [];
-
+  console.log(items);
   for (const key in items) {
     // skip non video results
     if (items[key]["id"]["kind"] !== "youtube#video") continue;
@@ -96,21 +103,46 @@ let displayResults = (results) => {
 
 let displayChannelImgs = (channelIds, displayChannelImgsOnDocument) => {
   // using a loop since the api skips repeated channel ids
-  for (let count = 0; count < channelIds.length; count++) {
-    fetch(
+  // repeated channel ids could be present if search results include more than one video for same channel
+
+  // const channelDataPromises = [];
+
+  const channelDataPromises = channelIds.map((channelId) => {
+    return fetch(
       "https://youtube.googleapis.com/youtube/v3/channels?" +
         new URLSearchParams({
           part: ["snippet", "contentDetails", "statistics"],
-          id: channelIds[count],
+          id: channelId,
           key: key,
         }).toString()
+    );
+  });
+
+  // for (let count = 0; count < channelIds.length; count++) {
+  //   let result = fetch(
+  //     "https://youtube.googleapis.com/youtube/v3/channels?" +
+  //       new URLSearchParams({
+  //         part: ["snippet", "contentDetails", "statistics"],
+  //         id: channelIds[count],
+  //         key: key,
+  //       }).toString()
+  //   );
+  //   channelDataPromises.push(result);
+
+  // .then((data) => data.json())
+  // .then((data) => displayChannelImgsOnDocument(data, count));
+  // }
+
+  Promise.all(channelDataPromises).then((responses) =>
+    responses.forEach((response, index) =>
+      response.json().then((data) => displayChannelImgsOnDocument(data, index))
     )
-      .then((data) => data.json())
-      .then((data) => displayChannelImgsOnDocument(data, count));
-  }
+  );
 };
 
 let displayChannelImgsOnDocument = (data, counter) => {
+  // displays channel icon in search results
+
   let channelInfoDivs = document.getElementsByClassName("channel-info");
   let channelTitledivs = document.getElementsByClassName("channel-title");
   let hiddenDivs = document.getElementsByClassName("hidden");
@@ -145,8 +177,6 @@ let displayVideoInfo = (videoIds, displayVideoInfoOnDocument) => {
   )
     .then((data) => data.json())
     .then((data) => displayVideoInfoOnDocument(data));
-
-  // addCardClickListeners();
 };
 
 // search page
@@ -201,6 +231,7 @@ let displayVideoInfoOnDocument = (results) => {
     hiddenInfoDiv.appendChild(videoIdHTML);
 
     cardDiv.appendChild(hiddenInfoDiv);
+
     counter++;
   }
 
@@ -242,9 +273,8 @@ if (fileName === "video.html") {
 }
 
 function addVideoPageDivs(cardText, hiddenText) {
-  [title, viewsAndPublishDate, channelTitle, _, description] = cardText.split(
-    "\n"
-  );
+  [title, viewsAndPublishDate, channelTitle, _, description] =
+    cardText.split("\n");
 
   // 3279943 views      at: 2018-07-16
   [likes, dislikes, videoId, channelThumbnailUrl] = hiddenText.split("\n");
